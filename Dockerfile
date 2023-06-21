@@ -22,9 +22,11 @@ RUN git clone https://github.com/pytorch/fairseq  && \
     pip3 install --editable ./ && \
     pip3 install tensorboardX
 
-# Download the model using curl
-RUN cd /app/fairseq && \
-    curl -L -o ./models_new/mms1b_fl102.pt 'https://dl.fbaipublicfiles.com/mms/asr/mms1b_fl102.pt'
+# Create the models_new directory
+RUN mkdir -p /app/fairseq/models_new
+
+# Copy the model file
+COPY models/mms1b_fl102.pt /app/fairseq/models_new/mms1b_fl102.pt
 
 
 # Stage 2: Runtime environment
