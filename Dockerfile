@@ -1,5 +1,6 @@
 #FROM python:3.8
 FROM nvidia/cuda:11.5.1-devel-ubuntu20.04
+docker build --parallel 8 .
 # Install dependencies
 RUN apt-get update && apt-get install -y ffmpeg git
 
