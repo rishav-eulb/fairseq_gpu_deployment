@@ -17,7 +17,7 @@ RUN apt-get install -y python3-dev && \
     pip3 install -r requirements.txt
 
 # Clone fairseq and install
-RUN git clone https://github.com/pytorch/fairseq && \
+RUN git clone https://github.com/pytorch/fairseq  && \
     cd /app/fairseq && \
     pip3 install --editable ./ && \
     pip3 install tensorboardX
@@ -26,6 +26,9 @@ RUN git clone https://github.com/pytorch/fairseq && \
 RUN mkdir -p /app/fairseq/models_new && \
     curl -L -o /app/fairseq/models_new/mms1b_fl102.pt 'https://dl.fbaipublicfiles.com/mms/asr/mms1b_fl102.pt'
 
+# Clean up unnecessary files and packages
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Stage 2: Runtime environment
 FROM nvidia/cuda:11.5.1-runtime-ubuntu20.04
@@ -56,4 +59,3 @@ RUN mkdir /temp_dir
 COPY . /app
 
 CMD ["python", "/app/api.py"]
-
