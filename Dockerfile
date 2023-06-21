@@ -5,7 +5,7 @@ FROM nvidia/cuda:11.5.1-devel-ubuntu20.04 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install build dependencies
-RUN apt-get update && apt-get install -y ffmpeg git
+RUN apt-get update && apt-get install -y ffmpeg git curl
 
 WORKDIR /app
 
@@ -22,9 +22,9 @@ RUN git clone https://github.com/pytorch/fairseq /app/fairseq && \
     pip3 install --editable ./ && \
     pip3 install tensorboardX
 
-# Download the model
+# Download the model using curl
 RUN cd /app/fairseq && \
-    wget -P ./models_new 'https://dl.fbaipublicfiles.com/mms/asr/mms1b_fl102.pt'
+    curl -L -o ./models_new/mms1b_fl102.pt 'https://dl.fbaipublicfiles.com/mms/asr/mms1b_fl102.pt'
 
 
 # Stage 2: Runtime environment
