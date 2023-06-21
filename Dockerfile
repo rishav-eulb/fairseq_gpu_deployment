@@ -1,6 +1,9 @@
 # Stage 1: Build environment
 FROM nvidia/cuda:11.5.1-devel-ubuntu20.04 AS builder
 
+# Set noninteractive mode
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install build dependencies
 RUN apt-get update && apt-get install -y ffmpeg git
 
@@ -26,6 +29,9 @@ RUN cd /app/fairseq && \
 
 # Stage 2: Runtime environment
 FROM nvidia/cuda:11.5.1-runtime-ubuntu20.04
+
+# Set noninteractive mode
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y ffmpeg
