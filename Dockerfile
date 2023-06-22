@@ -5,30 +5,26 @@ FROM nvidia/cuda:11.5.1-devel-ubuntu20.04 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install build dependencies
-RUN apt-get update && apt-get install -y ffmpeg git curl
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg git curl ca-certificates
 
 WORKDIR /app
 
 # Install Python dependencies for building
 COPY requirements.txt .
-RUN apt-get install -y python3-dev && \
-    apt-get install -y python3-pip && \
+RUN apt-get install -y --no-install-recommends python3-dev python3-pip && \
     pip3 install --upgrade pip && \
-    pip3 install -r requirements.txt
+    pip3 install --no-cache-dir -r requirements.txt
 
 # Clone fairseq and install
-RUN git clone https://github.com/pytorch/fairseq  && \
+RUN git clone https://github.com/pytorch/fairseq /app/fairseq && \
     cd /app/fairseq && \
     pip3 install --editable ./ && \
-    pip3 install tensorboardX
+    pip3 install --no-cache-dir tensorboardX
 
 # Download the model using curl
 RUN mkdir -p /app/fairseq/models_new && \
     curl -L -o /app/fairseq/models_new/mms1b_fl102.pt 'https://dl.fbaipublicfiles.com/mms/asr/mms1b_fl102.pt'
 
-# Clean up unnecessary files and packages
-RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Stage 2: Runtime environment
 FROM nvidia/cuda:11.5.1-runtime-ubuntu20.04
@@ -37,7 +33,7 @@ FROM nvidia/cuda:11.5.1-runtime-ubuntu20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install runtime dependencies
-RUN apt-get update && apt-get install -y ffmpeg
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg ca-certificates
 
 WORKDIR /app
 
@@ -54,6 +50,10 @@ ENV USER micro
 
 # Create directory
 RUN mkdir /temp_dir
+
+# Clean up unnecessary files
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy the rest of the code
 COPY . /app
