@@ -33,7 +33,7 @@ FROM nvidia/cuda:11.5.1-runtime-ubuntu20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install runtime dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg ca-certificates
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg ca-certificates python3
 
 WORKDIR /app
 
@@ -58,4 +58,4 @@ RUN apt-get clean && \
 # Copy the rest of the code
 COPY . /app
 
-CMD ["python", "/app/api.py"]
+CMD ["python3", "/app/api.py"]
